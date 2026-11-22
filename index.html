@@ -1,0 +1,148 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#fff7f5">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="MoneyFlow">
+<link rel="manifest" href="./manifest.webmanifest">
+<title>MoneyFlow V3</title>
+<style>
+:root{--bg:#fff8f6;--panel:#fff;--pink:#d58da8;--pink2:#f8e7ed;--ink:#594653;--muted:#9b8792;--line:#f0e5e9;--green:#648d78;--red:#bd7184}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"PingFang SC","Microsoft YaHei",sans-serif;padding-bottom:calc(76px + env(safe-area-inset-bottom))}
+header{padding:calc(18px + env(safe-area-inset-top)) 18px 14px;display:flex;justify-content:space-between;align-items:center}
+.brand{font-size:23px;font-weight:750;letter-spacing:.2px}.tag{font-size:11px;color:var(--muted);margin-top:3px}
+main{max-width:760px;margin:auto;padding:0 14px 22px}.month{font-size:13px;color:var(--muted);margin:5px 4px 12px}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:20px;padding:17px;margin-bottom:12px;box-shadow:0 4px 18px rgba(119,77,96,.035)}
+.hero{background:linear-gradient(135deg,#fff 0%,#fff0f4 100%)}.eyebrow{font-size:12px;color:var(--muted)}.big{font-size:32px;font-weight:750;margin:7px 0 12px;letter-spacing:-.5px}
+.track{height:9px;background:#f4e6eb;border-radius:20px;overflow:hidden}.fill{height:100%;background:var(--pink);border-radius:20px;width:0}
+.row{display:flex;justify-content:space-between;align-items:center;gap:10px}.small{font-size:12px;color:var(--muted)}.stats{display:grid;grid-template-columns:1fr 1fr;gap:10px}.stat{background:#fff;border:1px solid var(--line);border-radius:16px;padding:14px;min-width:0}.stat .value{font-size:20px;font-weight:700;margin-top:7px;overflow-wrap:anywhere}
+h2{font-size:16px;margin:3px 0 13px}.actions{display:grid;grid-template-columns:repeat(3,1fr);gap:9px}.action{border:0;border-radius:15px;padding:13px 5px;background:var(--pink2);color:#85566c;font-size:13px;font-weight:650}
+button,input,select{font:inherit}button{cursor:pointer}.section{display:none}.section.active{display:block}
+nav{position:fixed;bottom:0;left:0;right:0;background:rgba(255,255,255,.96);backdrop-filter:blur(14px);border-top:1px solid var(--line);padding:9px 8px calc(9px + env(safe-area-inset-bottom));display:grid;grid-template-columns:repeat(4,1fr);z-index:5}
+nav button{border:0;background:transparent;color:var(--muted);font-size:11px;padding:5px 2px}nav button.active{color:#a85f7d;font-weight:700}nav span{display:block;font-size:19px;margin-bottom:3px}
+.listrow{padding:12px 0;border-bottom:1px solid var(--line)}.listrow:last-child{border:0}
+.btn{border:0;background:var(--pink);color:#fff;border-radius:13px;padding:12px 16px;font-weight:650}.btn.secondary{background:var(--pink2);color:#85566c}.btn.danger{background:#f7e7e9;color:#a65e70}
+.field{display:grid;gap:6px;margin:12px 0}.field label{font-size:12px;color:var(--muted)}input,select{width:100%;min-height:44px;border:1px solid var(--line);border-radius:12px;padding:10px 12px;background:#fff;color:var(--ink);font-size:16px}
+.modal{position:fixed;inset:0;background:rgba(53,36,46,.28);display:none;align-items:flex-end;justify-content:center;z-index:10}.modal.open{display:flex}.sheet{width:min(100%,560px);max-height:92dvh;overflow:auto;background:var(--bg);border-radius:22px 22px 0 0;padding:18px 18px calc(20px + env(safe-area-inset-bottom))}
+.notice{font-size:12px;color:var(--muted);line-height:1.6}.empty{text-align:center;color:var(--muted);padding:24px 8px;font-size:13px}
+.pill{font-size:11px;padding:4px 8px;border-radius:20px;background:var(--pink2);color:#94647a}.positive{color:var(--green)}.negative{color:var(--red)}
+@media(min-width:650px){main{padding:0 22px 30px}.modal{align-items:center}.sheet{border-radius:22px;margin:20px}}
+</style>
+</head>
+<body>
+<header><div><div class="brand">MoneyFlow <span style="color:var(--pink)">♡</span></div><div class="tag">Make money feel lighter</div></div><span class="pill">V3.0 · 本地版</span></header>
+<main>
+<div class="month" id="monthLabel"></div>
+<section class="section active" id="home">
+ <div class="card hero">
+  <div class="eyebrow">本月总预算剩余</div><div class="big" id="budgetLeft">¥0.00</div>
+  <div class="track"><div class="fill" id="budgetFill"></div></div>
+  <div class="row small" style="margin-top:9px"><span id="spentLabel">已消费 ¥0.00</span><span id="budgetLabel">预算 ¥0.00</span></div>
+ </div>
+ <div class="stats">
+  <div class="stat"><div class="eyebrow">本月收入</div><div class="value positive" id="incomeValue">¥0.00</div></div>
+  <div class="stat"><div class="eyebrow">日常消费</div><div class="value" id="expenseValue">¥0.00</div></div>
+  <div class="stat"><div class="eyebrow">个人往来支出</div><div class="value" id="personalValue">¥0.00</div></div>
+  <div class="stat"><div class="eyebrow">还款</div><div class="value" id="repaymentValue">¥0.00</div></div>
+ </div>
+ <div class="card" style="margin-top:12px"><h2>快捷操作</h2><div class="actions">
+  <button class="action" data-open="expense">＋ 记一笔</button><button class="action" data-open="salary">♡ 录入工资</button><button class="action" id="importQuick">⇧ 导入 CSV</button>
+ </div></div>
+ <div class="card"><div class="row"><h2>最近流水</h2><button class="btn secondary" id="allTransactions">查看全部</button></div><div id="recentList"></div></div>
+</section>
+<section class="section" id="transactions">
+ <div class="row"><h2>全部流水</h2><button class="btn" data-open="expense">＋ 新增</button></div>
+ <div class="card"><div class="field"><label>按月份查看</label><input type="month" id="filterMonth"></div><div id="transactionList"></div></div>
+ <div class="card"><h2>数据备份</h2><div class="actions"><button class="action" id="exportCsv">导出 CSV</button><button class="action" id="exportJson">备份 JSON</button><button class="action" id="importJson">恢复 JSON</button></div><p class="notice">建议定期导出备份。浏览器本地数据不等于云端备份。</p></div>
+</section>
+<section class="section" id="budget">
+ <h2>预算管理</h2>
+ <div class="card"><div class="field"><label>本月总预算（元）</label><input id="totalBudgetInput" type="number" min="0" step=".01" placeholder="例如 3000"></div><button class="btn" id="saveBudget">保存总预算</button></div>
+ <div class="card"><h2>分类预算</h2><div id="categoryBudgetList"></div><p class="notice">分类预算与总预算分别统计。个人往来、还款和资金转移不占用日常消费预算。</p></div>
+</section>
+<section class="section" id="settings">
+ <h2>设置与数据管理</h2>
+ <div class="card"><h2>账本规则</h2><p class="notice">工资由你每次到账后手动录入。支付宝和微信官方账单作为主数据源。喵喵记账仅作辅助核对。疑似重复交易不会自动删除。未关联退款单独显示，不自动冲减消费。</p></div>
+ <div class="card"><h2>导入历史账单</h2><p class="notice">当前版本提供通用 CSV 导入入口。历史核对结果文件应在导入前核对列名映射与分类，避免重复导入。微信 XLSX 解析将在下一版加入。</p><button class="btn" id="importSettings">选择 CSV 文件</button><input type="file" id="csvFile" accept=".csv,text/csv" hidden></div>
+ <div class="card"><h2>数据状态</h2><div id="dbStatus" class="notice">正在检查本地数据库…</div><button class="btn danger" id="clearData" style="margin-top:12px">清空本机账本</button></div>
+</section>
+</main>
+<nav><button class="active" data-tab="home"><span>⌂</span>首页</button><button data-tab="transactions"><span>≡</span>流水</button><button data-tab="budget"><span>♡</span>预算</button><button data-tab="settings"><span>⚙</span>设置</button></nav>
+<div class="modal" id="modal"><div class="sheet">
+ <div class="row"><h2 id="formTitle">新增流水</h2><button class="btn secondary" id="closeModal">关闭</button></div>
+ <form id="txForm">
+  <div class="field"><label>流水类型</label><select id="txType"><option value="consumption">日常消费</option><option value="salary">工资收入</option><option value="other_income">其他收入</option><option value="personal_transfer">个人往来支出</option><option value="debt_repayment">债务还款</option><option value="refund">退款</option><option value="fund_transfer">资金转移</option><option value="borrowing">借入</option></select></div>
+  <div class="field"><label>金额（元）</label><input id="txAmount" type="number" min="0.01" step=".01" required placeholder="0.00"></div>
+  <div class="field"><label>日期</label><input id="txDate" type="date" required></div>
+  <div class="field"><label>分类</label><select id="txCategory"><option>餐饮</option><option>购物</option><option>娱乐</option><option>交通</option><option>居住</option><option>医疗</option><option>其他</option></select></div>
+  <div class="field"><label>账户</label><select id="txAccount"><option>银行卡</option><option>支付宝</option><option>微信</option><option>现金</option><option>其他</option></select></div>
+  <div class="field"><label>备注</label><input id="txNote" maxlength="120" placeholder="可填写商家或用途"></div>
+  <button class="btn" style="width:100%;margin-top:8px" type="submit">保存流水</button>
+ </form>
+</div></div>
+<input type="file" id="jsonFile" accept=".json,application/json" hidden>
+<script>
+(()=> {
+const DB_NAME='MoneyFlowV3', DB_VERSION=1; let db=null, editingId=null;
+const $=id=>document.getElementById(id);
+const money=n=>'¥'+(Number(n||0)).toLocaleString('zh-CN',{minimumFractionDigits:2,maximumFractionDigits:2});
+const today=()=>new Date().toISOString().slice(0,10);
+const monthNow=()=>today().slice(0,7);
+const categories=['餐饮','购物','娱乐','交通','居住','医疗','其他'];
+const typeNames={consumption:'日常消费',salary:'工资收入',other_income:'其他收入',personal_transfer:'个人往来支出',debt_repayment:'债务还款',refund:'退款',fund_transfer:'资金转移',borrowing:'借入'};
+function openDB(){return new Promise((resolve,reject)=>{if(!('indexedDB'in window)){reject(new Error('浏览器不支持 IndexedDB'));return;}const req=indexedDB.open(DB_NAME,DB_VERSION);req.onupgradeneeded=()=>{const d=req.result;if(!d.objectStoreNames.contains('transactions')){const s=d.createObjectStore('transactions',{keyPath:'id'});s.createIndex('date','date');}if(!d.objectStoreNames.contains('settings'))d.createObjectStore('settings',{keyPath:'key'});};req.onsuccess=()=>resolve(req.result);req.onerror=()=>reject(req.error);});}
+function store(name,mode='readonly'){return db.transaction(name,mode).objectStore(name)}
+const all=()=>new Promise((res,rej)=>{const r=store('transactions').getAll();r.onsuccess=()=>res(r.result||[]);r.onerror=()=>rej(r.error)});
+const setting=key=>new Promise((res,rej)=>{const r=store('settings').get(key);r.onsuccess=()=>res(r.result?.value);r.onerror=()=>rej(r.error)});
+const setSetting=(key,value)=>new Promise((res,rej)=>{const r=store('settings','readwrite').put({key,value});r.onsuccess=()=>res();r.onerror=()=>rej(r.error)});
+const saveTx=tx=>new Promise((res,rej)=>{const r=store('transactions','readwrite').put(tx);r.onsuccess=()=>res();r.onerror=()=>rej(r.error)});
+const deleteTx=id=>new Promise((res,rej)=>{const r=store('transactions','readwrite').delete(id);r.onsuccess=()=>res();r.onerror=()=>rej(r.error)});
+function monthRows(rows,m){return rows.filter(x=>(x.date||'').slice(0,7)===m)}
+function signedType(t){return ['salary','other_income'].includes(t)?'income':['consumption','personal_transfer','debt_repayment','refund','fund_transfer','borrowing'].includes(t)?'expense':'expense'}
+function effectiveExpense(rows){return rows.filter(x=>x.type==='consumption').reduce((s,x)=>s+Number(x.amount),0)-rows.filter(x=>x.type==='refund'&&x.relatedTransactionId).reduce((s,x)=>s+Number(x.amount),0)}
+async function render(){const rows=await all(),m=monthNow(),mr=monthRows(rows,m),income=mr.filter(x=>['salary','other_income'].includes(x.type)).reduce((s,x)=>s+x.amount,0),expense=effectiveExpense(mr),personal=mr.filter(x=>x.type==='personal_transfer').reduce((s,x)=>s+x.amount,0),repay=mr.filter(x=>x.type==='debt_repayment').reduce((s,x)=>s+x.amount,0),budget=Number(await setting('totalBudget')||0),left=budget-expense;
+$('monthLabel').textContent=m+' · 收支概览';$('budgetLeft').textContent=money(left);$('spentLabel').textContent='已消费 '+money(expense);$('budgetLabel').textContent='预算 '+money(budget);$('budgetFill').style.width=(budget?Math.min(100,Math.max(0,expense/budget*100)):0)+'%';$('incomeValue').textContent=money(income);$('expenseValue').textContent=money(expense);$('personalValue').textContent=money(personal);$('repaymentValue').textContent=money(repay);
+const recent=[...rows].sort((a,b)=>b.date.localeCompare(a.date)).slice(0,5);$('recentList').innerHTML=recent.length?recent.map(rowHtml).join(''):'<div class="empty">还没有流水，先记下第一笔吧 ♡</div>';
+$('filterMonth').value=$('filterMonth').value||m;const filtered=monthRows(rows,$('filterMonth').value);$('transactionList').innerHTML=filtered.length?[...filtered].sort((a,b)=>b.date.localeCompare(a.date)).map(rowHtml).join(''):'<div class="empty">这个月还没有流水</div>';
+$('totalBudgetInput').value=budget||'';const catBudgets=await setting('categoryBudgets')||{};$('categoryBudgetList').innerHTML=categories.map(c=>`<div class="field"><label>${c}预算（元）</label><input type="number" min="0" step=".01" data-cat="${c}" value="${catBudgets[c]||''}" placeholder="未设置"></div>`).join('');
+$('dbStatus').textContent=`本机已保存 ${rows.length} 笔流水。数据保存在此浏览器的本地数据库中。`;
+}
+function rowHtml(x){const positive=['salary','other_income'].includes(x.type);return `<div class="row listrow"><div style="min-width:0"><div style="font-size:14px;font-weight:650">${esc(x.note||typeNames[x.type]||'交易')}</div><div class="small">${esc(x.date)} · ${esc(x.category||typeNames[x.type]||'未分类')} · ${esc(x.account||'')}</div></div><div style="text-align:right;white-space:nowrap"><div class="${positive?'positive':'negative'}" style="font-weight:700">${positive?'+':'−'}${money(x.amount)}</div><button class="small" style="border:0;background:none;color:var(--muted);padding:5px" data-delete="${esc(x.id)}">删除</button></div></div>`}
+function esc(s){return String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
+function showTab(id){document.querySelectorAll('.section').forEach(x=>x.classList.toggle('active',x.id===id));document.querySelectorAll('nav button').forEach(x=>x.classList.toggle('active',x.dataset.tab===id));}
+function openForm(type){editingId=null;$('txForm').reset();$('txType').value=type==='salary'?'salary':type==='expense'?'consumption':'consumption';$('txDate').value=today();$('formTitle').textContent=type==='salary'?'录入工资':'新增流水';$('modal').classList.add('open')}
+function closeForm(){$('modal').classList.remove('open')}
+document.querySelectorAll('nav button').forEach(b=>b.addEventListener('click',()=>showTab(b.dataset.tab)));
+document.querySelectorAll('[data-open]').forEach(b=>b.addEventListener('click',()=>openForm(b.dataset.open)));
+$('closeModal').addEventListener('click',closeForm);$('allTransactions').addEventListener('click',()=>showTab('transactions'));
+$('txType').addEventListener('change',()=>{$('formTitle').textContent=$('txType').value==='salary'?'录入工资':'新增流水'});
+$('txForm').addEventListener('submit',async e=>{e.preventDefault();const type=$('txType').value,amount=Math.round(Number($('txAmount').value)*100)/100;if(!Number.isFinite(amount)||amount<=0){alert('请输入有效金额');return;}const tx={id:crypto.randomUUID?crypto.randomUUID():String(Date.now())+Math.random(),date:$('txDate').value,amount,type,direction:signedType(type),category:['salary','other_income'].includes(type)?'收入':$('txCategory').value,account:$('txAccount').value,source:'manual',platformTransactionId:null,relatedTransactionId:null,note:$('txNote').value.trim(),reviewStatus:'confirmed',createdAt:new Date().toISOString()};await saveTx(tx);closeForm();await render();showTab('home')});
+document.addEventListener('click',async e=>{const id=e.target.dataset.delete;if(id&&confirm('确定删除这笔流水？')){await deleteTx(id);await render()}});
+$('filterMonth').addEventListener('change',render);
+$('saveBudget').addEventListener('click',async()=>{const v=Math.max(0,Number($('totalBudgetInput').value)||0);await setSetting('totalBudget',v);const obj={};document.querySelectorAll('[data-cat]').forEach(i=>obj[i.dataset.cat]=Math.max(0,Number(i.value)||0));await setSetting('categoryBudgets',obj);alert('预算已保存');await render()});
+function csvEscape(v){return '"'+String(v??'').replace(/"/g,'""')+'"'}
+$('exportCsv').addEventListener('click',async()=>{const rows=await all(),head=['date','amount','type','direction','category','account','source','platformTransactionId','note','reviewStatus'];download('\ufeff'+[head.join(','),...rows.map(x=>head.map(k=>csvEscape(x[k])).join(','))].join('\r\n'),'MoneyFlow_transactions.csv','text/csv;charset=utf-8')});
+$('exportJson').addEventListener('click',async()=>{const rows=await all(),settings={totalBudget:await setting('totalBudget'),categoryBudgets:await setting('categoryBudgets')};download(JSON.stringify({app:'MoneyFlow',version:3,exportedAt:new Date().toISOString(),transactions:rows,settings},null,2),'MoneyFlow_backup.json','application/json')});
+function download(data,name,type){const blob=new Blob([data],{type}),url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download=name;document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),1500)}
+$('importJson').addEventListener('click',()=>$('jsonFile').click());$('jsonFile').addEventListener('change',async e=>{const f=e.target.files[0];if(!f)return;try{const obj=JSON.parse(await f.text());if(!Array.isArray(obj.transactions))throw Error('备份格式不正确');for(const tx of obj.transactions)await saveTx(tx);if(obj.settings){if(obj.settings.totalBudget!==undefined)await setSetting('totalBudget',obj.settings.totalBudget);if(obj.settings.categoryBudgets)await setSetting('categoryBudgets',obj.settings.categoryBudgets)}alert('恢复完成');await render()}catch(err){alert('恢复失败：'+err.message)}e.target.value=''});
+function parseCSV(text){const rows=[];let row=[],field='',quoted=false;for(let i=0;i<text.length;i++){const c=text[i];if(quoted){if(c==='"'&&text[i+1]==='"'){field+='"';i++}else if(c==='"')quoted=false;else field+=c}else if(c==='"')quoted=true;else if(c===','){row.push(field);field=''}else if(c==='\n'){row.push(field);rows.push(row);row=[];field=''}else if(c!=='\r')field+=c}if(field.length||row.length){row.push(field);rows.push(row)}return rows}
+function normalizeHeader(s){return String(s||'').trim().toLowerCase()}
+$('importQuick').addEventListener('click',()=>$('csvFile').click());$('importSettings').addEventListener('click',()=>$('csvFile').click());
+$('csvFile').addEventListener('change',async e=>{const f=e.target.files[0];if(!f)return;try{let text=await f.text();if(text.includes('�')){alert('文件编码可能不是 UTF-8。请先将 CSV 另存为 UTF-8 编码后再导入。');return;}const rows=parseCSV(text);if(rows.length<2)throw Error('文件没有可导入的数据');const headers=rows[0].map(normalizeHeader),idx=(...names)=>headers.findIndex(h=>names.includes(h));const dateI=idx('date','日期','交易时间','记录时间'),amountI=idx('amount','金额'),typeI=idx('type','交易类型','分类'),noteI=idx('note','备注','商品说明','交易对方'),accountI=idx('account','账户'),idI=idx('platformtransactionid','交易单号','交易号');if(dateI<0||amountI<0)throw Error('至少需要 date/日期 和 amount/金额 两列');let count=0;for(const r of rows.slice(1)){const raw=String(r[amountI]||'').replace(/[￥¥,\s]/g,'');const amount=Math.abs(Number(raw));if(!amount||!Number.isFinite(amount))continue;const rawType=String(typeI>=0?r[typeI]:'consumption');let type=/工资/.test(rawType)?'salary':/收入/.test(rawType)?'other_income':/还款/.test(rawType)?'debt_repayment':/往来/.test(rawType)?'personal_transfer':/退款/.test(rawType)?'refund':/转账|转移/.test(rawType)?'fund_transfer':'consumption';const date=String(r[dateI]||'').slice(0,10).replace(/\//g,'-');if(!/^\d{4}-\d{2}-\d{2}$/.test(date))continue;const pid=idI>=0?String(r[idI]||'').trim():'';const exists=pid&&(await all()).some(x=>x.platformTransactionId===pid&&x.source!=='manual');if(exists)continue;await saveTx({id:crypto.randomUUID?crypto.randomUUID():String(Date.now())+Math.random(),date,amount,type,direction:signedType(type),category:type==='consumption'?(rawType||'其他'):'',account:accountI>=0?r[accountI]:'',source:'import',platformTransactionId:pid||null,note:noteI>=0?r[noteI]:'',reviewStatus:'pending',createdAt:new Date().toISOString()});count++}alert(`导入完成：${count} 笔。导入流水已标记为待核对，请检查分类。`);await render()}catch(err){alert('导入失败：'+err.message)}e.target.value=''});
+$('clearData').addEventListener('click',async()=>{if(!confirm('确定清空本机所有 MoneyFlow 流水和预算？请先导出备份。'))return;await new Promise((res,rej)=>{const t=db.transaction(['transactions','settings'],'readwrite');t.objectStore('transactions').clear();t.objectStore('settings').clear();t.oncomplete=res;t.onerror=()=>rej(t.error)});await render();alert('本机账本已清空')});
+(async()=>{try{db=await openDB();await render()}catch(e){$('dbStatus').textContent='本地数据库初始化失败：'+e.message+'。请使用较新版本的 Safari 或 Samsung Internet，并确保未处于隐私浏览模式。'}})();
+})();
+</script>
+
+<script>
+if ('serviceWorker' in navigator && location.protocol.startsWith('http')) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('./service-worker.js').catch(() => {});
+  });
+}
+</script>
+
+</body></html>

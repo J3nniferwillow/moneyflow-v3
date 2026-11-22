@@ -1,0 +1,11 @@
+{
+  "name": "MoneyFlow",
+  "short_name": "MoneyFlow",
+  "description": "个人收支与预算管理",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#fff8f6",
+  "theme_color": "#fff7f5",
+  "lang": "zh-CN"
+}
